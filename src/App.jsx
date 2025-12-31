@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Route, Routes } from "react-router-dom";
+import Signup from "./pages/Signup.jsx";
 
 // Import your new layout and pages
 import MainLayout from "./components/MainLayout.jsx";
@@ -11,6 +12,7 @@ import Contact from "./pages/Contact.jsx";
 import SelectWorkout from "./pages/SelectWorkout.jsx";
 import Login from "./pages/Login.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
+import TrainerMatch from './pages/TrainerMatch';
 
 const App = () => {
   return (
@@ -23,6 +25,8 @@ const App = () => {
           <Route path="contact" element={<Contact />} />
           <Route path="select-workout" element={<SelectWorkout />} />
           <Route path="login" element={<Login />} />
+          <Route path='/matchmaker' element={<TrainerMatch />} />
+          <Route path="signup" element={<Signup />} />
         </Route>
 
         {/* 👇 Admin routes are separate and won't have the Navbar */}

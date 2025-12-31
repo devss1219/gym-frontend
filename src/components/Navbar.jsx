@@ -1,150 +1,190 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, NavLink } from 'react-router-dom';
+import { useLocation, NavLink, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaHome, FaInfoCircle, FaEnvelope, FaDumbbell, FaUserPlus } from 'react-icons/fa';
-
-// --- (Framer Motion variants definitions are at the bottom) ---
+import { FaHome, FaInfoCircle, FaEnvelope, FaDumbbell, FaUserPlus, FaSignOutAlt, FaThLarge } from 'react-icons/fa';
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [userName, setUserName] = useState("");
+  const [userRole, setUserRole] = useState(""); 
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 10);
+    const checkUser = () => {
+      const userData = localStorage.getItem("user");
+      if (userData) {
+        const user = JSON.parse(userData);
+        setUserName(user.name);
+        setUserRole(user.role);
+      } else {
+        setUserName("");
+        setUserRole("");
+      }
+    };
+    checkUser();
+    window.addEventListener('storage', checkUser);
+    return () => window.removeEventListener('storage', checkUser);
+  }, [location]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setUserName("");
+    setUserRole("");
+    setIsMenuOpen(false);
+    navigate("/login");
+  };
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   useEffect(() => {
     document.body.style.overflow = isMenuOpen ? 'hidden' : 'auto';
-    return () => (document.body.style.overflow = 'auto');
   }, [isMenuOpen]);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
-  const getLinkClasses = (path) => {
-    const isActive = location.pathname === path;
-    return {
-      textColor: isActive ? 'text-orange-500' : 'text-gray-300 hover:text-orange-500',
-      underlineVisibility: isActive ? 'scale-x-100' : 'scale-x-0',
-    };
-  };
-
-  // RESTORED: navLinks with icons
+  // --- 👇 UPDATED NAVLINKS ---
   const navLinks = [
     { path: '/', label: 'Home', icon: <FaHome /> },
-    { path: '/about', label: 'About Us', icon: <FaInfoCircle /> },
+    { path: '/about', label: 'About Us', icon: <FaInfoCircle /> }, // About Us is Back!
+    { path: '/select-workout', label: 'Workouts', icon: <FaDumbbell /> },
     { path: '/contact', label: 'Contact', icon: <FaEnvelope /> },
-    { path: '/select-workout', label: 'Select Workout', icon: <FaDumbbell /> },
   ];
 
   return (
     <>
-      <nav
-        className={`fixed top-0 left-0 w-full p-4 sm:p-6 z-50 transition-all duration-300 ${
-          scrolled || isMenuOpen
-            ? 'bg-gray-900/80 backdrop-blur-lg shadow-lg'
-            : 'bg-transparent'
+      <nav 
+        className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
+          scrolled || isMenuOpen 
+          ? 'py-3 bg-gray-900/90 backdrop-blur-xl border-b border-white/10' 
+          : 'py-6 bg-transparent'
         }`}
       >
-        <div className="container mx-auto flex justify-between items-center">
-            {/* Logo */}
-            <NavLink to="/" className="relative text-2xl font-bold tracking-wider uppercase">
-                <motion.span className="text-white" initial={{ scale: 0.9 }} animate={{ scale: 1 }} transition={{ duration: 0.6, type: 'spring', stiffness: 120 }} whileHover={{ scale: 1.1 }}>
-                NO
-                </motion.span>
-                <span className="text-2xl md:text-3xl font-extrabold shimmer"> Limit </span>
-            </NavLink>
-
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-8">
-                {navLinks.map(({ path, label }) => (
-                <NavLink key={path} to={path} className={`relative group font-medium transition-colors ${getLinkClasses(path).textColor}`}>
-                    <span>{label}</span>
-                    <span className={`absolute -bottom-1 left-0 h-0.5 w-full bg-orange-500 transform origin-left transition-transform duration-300 ease-out ${getLinkClasses(path).underlineVisibility} group-hover:scale-x-100`}></span>
-                </NavLink>
-                ))}
+        <div className="container mx-auto px-6 flex justify-between items-center">
+          
+          <NavLink to="/" className="flex items-center gap-2 group">
+            <div className="bg-orange-600 p-1.5 rounded-lg transform group-hover:rotate-12 transition-transform">
+               <FaDumbbell className="text-white text-xl" />
             </div>
+            <span className="text-2xl font-black italic uppercase tracking-tighter text-white">
+              NO <span className="text-orange-500 not-italic">LIMIT</span>
+            </span>
+          </NavLink>
 
-            {/* Desktop Join Now button */}
-            <NavLink to="/login" className="hidden md:block bg-orange-500 text-white font-bold py-2 px-5 rounded-md hover:bg-orange-600 transition-all transform hover:scale-105">
+          <div className="hidden md:flex items-center bg-white/5 border border-white/10 px-2 py-1.5 rounded-full backdrop-blur-md">
+            {navLinks.map(({ path, label }) => (
+              <NavLink 
+                key={path} 
+                to={path} 
+                className={({ isActive }) => `
+                  px-5 py-2 rounded-full text-[10px] lg:text-xs font-black uppercase tracking-widest transition-all duration-300
+                  ${isActive ? 'bg-orange-600 text-white shadow-lg' : 'text-gray-400 hover:text-white'}
+                `}
+              >
+                {label}
+              </NavLink>
+            ))}
+          </div>
+
+          <div className="hidden md:flex items-center gap-4">
+            {userName ? (
+              <div className="flex items-center gap-3">
+                {userRole === "admin" && (
+                  <NavLink 
+                    to="/admin/dashboard" 
+                    className="text-[10px] font-black uppercase tracking-[0.2em] bg-white/5 border border-orange-500/30 text-orange-500 px-4 py-2 rounded-full hover:bg-orange-500 hover:text-white transition-all shadow-md"
+                  >
+                    Dashboard
+                  </NavLink>
+                )}
+                
+                <div className="flex items-center gap-3 bg-gray-800/80 pl-1 pr-4 py-1 rounded-full border border-white/10">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-orange-600 to-red-600 flex items-center justify-center text-white font-black text-[10px]">
+                    {userName.charAt(0)}
+                  </div>
+                  <span className="text-gray-200 font-bold text-xs uppercase tracking-wider">
+                    {userName.split(' ')[0]}
+                  </span>
+                  <button onClick={handleLogout} className="text-gray-500 hover:text-red-500 transition-colors ml-2">
+                    <FaSignOutAlt />
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <NavLink 
+                to="/login" 
+                className="bg-orange-600 text-white font-black px-8 py-2.5 rounded-full text-xs uppercase tracking-[0.2em] hover:bg-orange-700 transition-all shadow-lg active:scale-95"
+              >
                 Join Now
-            </NavLink>
+              </NavLink>
+            )}
+          </div>
 
-            {/* Hamburger Menu (Animated) */}
-            <div className="md:hidden">
-                <motion.button onClick={toggleMenu} className="text-white text-3xl z-50 relative w-10 h-10 flex items-center justify-center" whileHover={{ scale: 1.2, rotate: 10 }} transition={{ type: 'spring', stiffness: 200 }}>
-                    {isMenuOpen ? (
-                        <motion.svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" fill="none" initial={{ rotate: -90, scale: 0.7 }} animate={{ rotate: 0, scale: 1 }} transition={{ type: 'spring', stiffness: 200, damping: 20 }}>
-                            <line x1="18" y1="6" x2="6" y2="18" />
-                            <line x1="6" y1="6" x2="18" y2="18" />
-                        </motion.svg>
-                    ) : (
-                        <motion.svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" fill="none" initial={{ scale: 0.8 }} animate={{ scale: 1 }}>
-                            <line x1="3" y1="6" x2="21" y2="6" />
-                            <line x1="3" y1="12" x2="21" y2="12" />
-                            <line x1="3" y1="18" x2="21" y2="18" />
-                        </motion.svg>
-                    )}
-                </motion.button>
-            </div>
+          <div className="md:hidden">
+            <button onClick={toggleMenu} className="text-white text-3xl focus:outline-none">
+              {isMenuOpen ? "✕" : "☰"}
+            </button>
+          </div>
         </div>
       </nav>
 
-      {/* Mobile Menu with all advanced styles */}
+      {/* --- MOBILE MENU --- */}
       <AnimatePresence>
         {isMenuOpen && (
-          <motion.div
-            className="fixed top-0 left-0 w-full h-screen animated-gradient z-40 pt-28 p-8 flex flex-col items-center"
-            variants={menuVariants}
-            initial="hidden"
-            animate="visible"
-            exit="hidden"
+          <motion.div 
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 50 }}
+            className="fixed inset-0 w-full h-screen bg-gray-950 z-[45] flex flex-col p-8 pt-32"
           >
-            <motion.div
-              className="flex flex-col items-center justify-center w-full max-w-xs space-y-6 text-xl"
-              variants={linkContainerVariants}
-              initial="hidden"
-              animate="visible"
-            >
-              {navLinks.map(({ path, label, icon }) => {
-                const isActive = location.pathname === path;
-                return (
-                  <motion.div key={path} variants={linkVariants} className="w-full">
-                    <NavLink
-                      to={path}
-                      onClick={toggleMenu}
-                      className={`flex items-center justify-center w-full gap-4 px-4 py-3 font-semibold transition-all duration-300 rounded-full backdrop-blur-sm 
-                        ${isActive 
-                          ? 'bg-orange-500/20 ring-1 ring-orange-500' 
-                          : 'bg-white/5 hover:bg-white/10'
-                        }`}
-                    >
-                      <span className="text-orange-500">{icon}</span>
-                      <span className="shimmer-gold">{label}</span>
-                    </NavLink>
-                  </motion.div>
-                );
-              })}
+            <div className="flex flex-col space-y-8">
+              {userName && (
+                <div className="mb-4">
+                  <p className="text-gray-500 text-[10px] font-black uppercase tracking-widest">Logged In</p>
+                  <p className="text-white text-4xl font-black italic uppercase tracking-tighter">{userName}</p>
+                </div>
+              )}
 
-              <motion.div variants={linkVariants} className="w-full pt-4">
-                <NavLink to="/login" onClick={toggleMenu} className="flex items-center justify-center w-full gap-4 px-4 py-3 font-bold text-white transition-all duration-300 bg-orange-500 rounded-full hover:bg-orange-600">
-                  <FaUserPlus />
-                  <span>Join Now</span>
+              {navLinks.map(({ path, label, icon }) => (
+                <NavLink 
+                  key={path} 
+                  to={path} 
+                  onClick={toggleMenu} 
+                  className="flex items-center gap-6 text-3xl font-black text-gray-500 hover:text-white transition-all hover:italic hover:translate-x-4"
+                >
+                  <span className="text-orange-600 text-2xl">{icon}</span>
+                  {label.toUpperCase()}
                 </NavLink>
-              </motion.div>
-            </motion.div>
+              ))}
+
+              <div className="pt-10">
+                {userRole === "admin" && (
+                   <NavLink to="/admin/dashboard" onClick={toggleMenu} className="w-full py-4 mb-4 bg-orange-600/10 border border-orange-500/50 text-orange-500 rounded-2xl font-black uppercase text-center block">
+                      Admin Dashboard
+                   </NavLink>
+                )}
+                {userName ? (
+                  <button onClick={handleLogout} className="w-full py-5 bg-red-600 text-white rounded-2xl font-black uppercase italic tracking-widest flex items-center justify-center gap-3">
+                    <FaSignOutAlt /> Sign Out
+                  </button>
+                ) : (
+                  <NavLink to="/login" onClick={toggleMenu} className="w-full py-5 bg-orange-600 text-white rounded-2xl font-black uppercase italic tracking-widest flex items-center justify-center gap-3">
+                    <FaUserPlus /> Join Now
+                  </NavLink>
+                )}
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
     </>
   );
 };
-
-// --- Framer Motion variants definitions ---
-const menuVariants = { hidden: { clipPath: 'circle(30px at 90% 40px)', transition: { delay: 0.1, type: 'spring', stiffness: 400, damping: 40, }, }, visible: { clipPath: 'circle(150% at 90% 40px)', transition: { type: 'spring', stiffness: 20, restDelta: 2, }, }, };
-const linkContainerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.3, }, }, };
-const linkVariants = { hidden: { y: 20, opacity: 0 }, visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 100, }, }, };
 
 export default Navbar;

@@ -1,22 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
-// ✅ Reusable Tilt Component
+// ✅ Reusable Tilt Component (Premium version)
 const Tilt = ({ children, className }) => {
   return (
-    <div
-      className={`${className} transform transition-transform duration-500 hover:scale-[1.03]`}
-      style={{ willChange: "transform" }}
+    <motion.div
+      whileHover={{ scale: 1.02, rotateY: 5, rotateX: 5 }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      className={`${className} cursor-pointer`}
+      style={{ perspective: "1000px" }}
     >
       {children}
-    </div>
+    </motion.div>
   );
 };
 
-// ✅ Simple Typing Effect Component (no external lib)
-const TypingEffect = ({ text, speed = 30 }) => {
+// ✅ Typing Effect
+const TypingEffect = ({ text, speed = 40 }) => {
   const [displayedText, setDisplayedText] = useState("");
-
   useEffect(() => {
     let index = 0;
     const interval = setInterval(() => {
@@ -24,336 +25,164 @@ const TypingEffect = ({ text, speed = 30 }) => {
       index++;
       if (index >= text.length) clearInterval(interval);
     }, speed);
-
     return () => clearInterval(interval);
   }, [text, speed]);
-
   return <span>{displayedText}</span>;
 };
 
 const About = () => {
   return (
-    <div className="bg-gray-900 text-white overflow-hidden">
-      {/* Spacer for navbar */}
-      <div className="pt-24" />
-
-      {/* --- 1. INTRO SECTION --- */}
-      <section className="relative py-20 sm:py-28 text-center overflow-hidden">
-        {/* Pattern Background */}
-        <svg
-          className="absolute inset-0 w-full h-full opacity-40"
-          xmlns="http://www.w3.org/2000/svg"
-          preserveAspectRatio="xMidYMid slice"
-        >
+    <div className="bg-gray-950 text-white overflow-hidden relative">
+      
+      {/* --- 👇 MASTER BACKGROUND PATTERN --- */}
+      <div className="fixed inset-0 z-0 opacity-10 pointer-events-none">
+        <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
           <defs>
-            <pattern id="gymPatternIntro" width="120" height="120" patternUnits="userSpaceOnUse">
-              {/* Dumbbell Icon */}
-              <g fill="white">
-                <rect x="10" y="50" width="20" height="10" rx="2"></rect>
-                <rect x="90" y="50" width="20" height="10" rx="2"></rect>
-                <rect x="30" y="55" width="60" height="2"></rect>
-              </g>
-              {/* Kettlebell Icon */}
-              <circle cx="60" cy="20" r="15" stroke="white" strokeWidth="4" fill="none"></circle>
-              <rect x="50" y="20" width="20" height="25" rx="6" fill="white"></rect>
+            <pattern id="aboutPattern" width="120" height="120" patternUnits="userSpaceOnUse">
+              <rect x="10" y="50" width="20" height="10" rx="2" fill="white" />
+              <rect x="90" y="50" width="20" height="10" rx="2" fill="white" />
+              <rect x="30" y="55" width="60" height="2" fill="white" />
+              <circle cx="60" cy="20" r="15" stroke="white" strokeWidth="4" fill="none" />
+              <rect x="50" y="20" width="20" height="25" rx="6" fill="white" />
             </pattern>
           </defs>
-          <rect width="100%" height="100%" fill="url(#gymPatternIntro)" />
+          <rect width="100%" height="100%" fill="url(#aboutPattern)" />
         </svg>
+      </div>
 
-        {/* Dark Overlay */}
-        <div className="absolute inset-0 bg-gray-900/80"></div>
+      <div className="relative z-10">
+        <div className="pt-24" />
 
-        {/* Content */}
-        <div className="relative z-10">
-          <motion.h1
-            initial={{ opacity: 0, y: -40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-5xl md:text-7xl font-extrabold tracking-tight uppercase"
-          >
-            <span
-              className="text-transparent bg-clip-text 
-                   bg-gradient-to-r from-orange-400 via-amber-400 to-orange-500 
-                   animate-pulse"
+        {/* --- 1. HERO SECTION --- */}
+        <section className="relative py-24 text-center">
+          <div className="container mx-auto px-6">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1 }}
+              className="bg-black/40 backdrop-blur-xl border border-white/10 p-12 rounded-[40px] shadow-2xl inline-block"
             >
-              More Than Just a Gym
-            </span>
-          </motion.h1>
+              <h1 className="text-5xl md:text-8xl font-black uppercase italic tracking-tighter leading-none mb-6">
+                More Than Just <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-600">
+                  A GYM
+                </span>
+              </h1>
+              <p className="max-w-2xl mx-auto text-lg md:text-xl text-gray-400 font-medium italic">
+                At <span className="text-orange-500 font-black">NoLimit</span>, we don't just build muscles; we forge legacies. Break your limits every single day.
+              </p>
+            </motion.div>
+          </div>
+        </section>
 
-          <motion.p
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.2 }}
-            className="max-w-3xl mx-auto text-lg md:text-xl mt-6 text-gray-200"
-          >
-            At <span className="font-semibold shimmer">NoLimit</span>, we believe that fitness is a journey, not a destination.
-            We're a passionate community dedicated to pushing boundaries, breaking limits,
-            and forging the strongest version of ourselves—together.
-          </motion.p>
-        </div>
-      </section>
-
-      {/* --- 2. OUR STORY SECTION --- */}
-<section className="py-20 sm:py-28 relative overflow-hidden bg-gradient-to-r from-gray-900 via-gray-800 to-black">
-  <div className="container mx-auto px-6 grid md:grid-cols-2 gap-12 items-center relative z-10">
-    {/* Left Image */}
-    <motion.div
-      initial={{ opacity: 0, x: -50 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      transition={{ duration: 1 }}
-    >
-      <Tilt>
-        <img
-          src="https://images.unsplash.com/photo-1571902943202-507ec2618e8f?q=80&w=2787&auto=format&fit=crop"
-          alt="Personal training session"
-          className="rounded-2xl shadow-2xl object-cover w-full h-full border-4 border-orange-500/40"
-        />
-      </Tilt>
-    </motion.div>
-
-    {/* Right Text */}
-    <motion.div
-      initial={{ opacity: 0, x: 50 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      transition={{ duration: 1, delay: 0.2 }}
-      className="text-center md:text-left"
-    >
-      <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight uppercase mb-6">
-        Our{" "}
-        <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-amber-400 to-orange-600 animate-pulse">
-          Story
-        </span>
-      </h2>
-
-      {/* Typing Effect */}
-      <p className="text-gray-300 text-lg leading-relaxed font-medium mb-4">
-        <TypingEffect
-          text="Founded in 2020 by passionate fitness veterans, NoLimit was created to empower everyone to achieve their goals."
-          speed={50}
-        />
-      </p>
-
-      <p className="text-gray-300 text-lg leading-relaxed font-medium">
-        <TypingEffect
-          text="With top equipment, dedicated trainers, and a supportive environment, we invite you to join our journey to greatness."
-          speed={50}
-        />
-      </p>
-    </motion.div>
-  </div>
-
-  {/* Overlay for depth */}
-  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/70"></div>
-</section>
-{/* --- 3. OUR VALUES SECTION --- */}
-<section className="py-20 sm:py-28 relative overflow-hidden bg-gray-900 text-white">
-  {/* Pattern Background */}
-  <svg
-    className="absolute inset-0 w-full h-full opacity-20"
-    xmlns="http://www.w3.org/2000/svg"
-    preserveAspectRatio="xMidYMid slice"
-  >
-    <defs>
-      <pattern id="gymPatternValues" width="120" height="120" patternUnits="userSpaceOnUse">
-        {/* Dumbbell Icon */}
-        <g fill="white">
-          <rect x="10" y="50" width="20" height="10" rx="2"></rect>
-          <rect x="90" y="50" width="20" height="10" rx="2"></rect>
-          <rect x="30" y="55" width="60" height="2"></rect>
-        </g>
-        {/* Kettlebell Icon */}
-        <circle cx="60" cy="20" r="15" stroke="white" strokeWidth="4" fill="none"></circle>
-        <rect x="50" y="20" width="20" height="25" rx="6" fill="white"></rect>
-      </pattern>
-    </defs>
-    <rect width="100%" height="100%" fill="url(#gymPatternValues)" />
-  </svg>
-
-  {/* Dark overlay for contrast */}
-  <div className="absolute inset-0 bg-gray-900/80"></div>
-
-  <div className="container mx-auto px-6 relative z-10 text-center">
-    <motion.h2
-      initial={{ opacity: 0, y: -40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 1 }}
-      className="text-5xl md:text-6xl font-extrabold tracking-tight uppercase mb-16"
-    >
-      What We <span className="text-orange-500">Stand For</span>
-    </motion.h2>
-
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-      {[
-        {
-          title: "Strength & Dedication",
-          text: "We champion the commitment required to achieve greatness, providing the tools and support for your journey.",
-          icon: (
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M13 10V3L4 14h7v7l9-11h-7z"
-            />
-          ),
-        },
-        {
-          title: "Community First",
-          text: "We are a diverse family united by a common goal. We support, motivate, and celebrate each other's successes.",
-          icon: (
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1z"
-            />
-          ),
-        },
-        {
-          title: "Continuous Improvement",
-          text: "We believe in constant evolution—of our members, our trainers, and our facility. We never settle for good enough.",
-          icon: (
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M9 19V9a2 2 0 012-2h2a2 2 0 012 2v10"
-            />
-          ),
-        },
-      ].map((val, i) => (
-        <motion.div
-          key={i}
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: i * 0.2 }}
-        >
-          <Tilt className="relative bg-gray-800 p-8 rounded-2xl border border-gray-700 hover:border-orange-500 transition-colors duration-300 shadow-lg flex flex-col items-center group">
-            
-           
-            {/* Spinning SVG Icon */}
-            <svg
-              className="w-16 h-16 text-orange-500 mb-4 group-hover:animate-spin-fast"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+        {/* --- 2. OUR STORY SECTION --- */}
+        <section className="py-20">
+          <div className="container mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              className="relative group"
             >
-              {val.icon}
-            </svg>
+              <div className="absolute -inset-4 bg-orange-600/20 rounded-3xl blur-2xl group-hover:bg-orange-600/40 transition-all duration-700"></div>
+              <Tilt>
+                <img
+                  src="https://images.unsplash.com/photo-1571902943202-507ec2618e8f?q=80&w=2787"
+                  alt="Gym Session"
+                  className="relative rounded-3xl shadow-2xl border border-white/10 grayscale hover:grayscale-0 transition-all duration-700"
+                />
+              </Tilt>
+            </motion.div>
 
-            <h3 className="text-2xl md:text-3xl font-extrabold mb-2">{val.title}</h3>
-            <p className="text-gray-300 text-lg font-medium">{val.text}</p>
-          </Tilt>
-        </motion.div>
-      ))}
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              className="space-y-6"
+            >
+              <h2 className="text-4xl md:text-6xl font-black uppercase italic tracking-tighter">
+                Our <span className="text-orange-500">Legacy</span>
+              </h2>
+              <p className="text-gray-400 text-lg leading-relaxed font-medium italic">
+                <TypingEffect text="Started in 2020, we grew from a small garage to a high-tech fitness sanctuary. Our mission is simple: Empowerment." />
+              </p>
+              <div className="h-1 w-20 bg-orange-600 rounded-full"></div>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* --- 3. OUR VALUES (GLASS CARDS) --- */}
+        <section className="py-20 relative">
+          <div className="container mx-auto px-6 text-center">
+            <h2 className="text-4xl md:text-6xl font-black uppercase italic mb-16 tracking-tighter">
+              What We <span className="text-orange-500">Stand For</span>
+            </h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {[
+                { title: "Grit", desc: "Pure dedication to the craft of physical excellence.", icon: "⚡" },
+                { title: "Family", desc: "A brotherhood of warriors supporting each other.", icon: "🤝" },
+                { title: "Evolution", desc: "Constant progress. We never settle for 'Good Enough'.", icon: "🚀" }
+              ].map((val, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.2 }}
+                >
+                  <Tilt className="bg-white/5 backdrop-blur-md p-10 rounded-[30px] border border-white/10 hover:border-orange-500/50 transition-all h-full shadow-2xl">
+                    <div className="text-5xl mb-6">{val.icon}</div>
+                    <h3 className="text-2xl font-black uppercase italic mb-4">{val.title}</h3>
+                    <p className="text-gray-400 font-medium italic leading-relaxed">{val.desc}</p>
+                  </Tilt>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* --- 4. TRAINERS (ULTRA GLOW) --- */}
+        <section className="py-20">
+          <div className="container mx-auto px-6 text-center">
+            <h2 className="text-4xl md:text-6xl font-black uppercase italic mb-16 tracking-tighter">
+              Elite <span className="text-orange-500">Commanders</span>
+            </h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+              {[
+                { name: "Jane Doe", role: "Strength General", img: "https://images.unsplash.com/photo-1605296867304-46d5465a13f1?q=80&w=2940" },
+                { name: "John Smith", role: "Endurance Master", img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=2940" },
+                { name: "Emily White", role: "Holistic Guru", img: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=600" }
+              ].map((trainer, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                >
+                  <Tilt className="group relative bg-gray-900 rounded-[40px] overflow-hidden border border-white/5 hover:border-orange-500/50 shadow-2xl transition-all">
+                    <div className="h-96 w-full relative">
+                      <img src={trainer.img} alt={trainer.name} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-110" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-transparent to-transparent"></div>
+                    </div>
+                    <div className="p-8 absolute bottom-0 w-full text-left">
+                      <h3 className="text-2xl font-black uppercase italic text-white leading-none">{trainer.name}</h3>
+                      <p className="text-orange-500 font-bold uppercase text-xs tracking-widest mt-2">{trainer.role}</p>
+                    </div>
+                  </Tilt>
+                </motion.div>
+              ))}
+            </div>
+
+            <motion.div className="mt-20">
+              <a
+                href="/select-workout"
+                className="inline-block bg-orange-600 hover:bg-orange-500 text-white font-black py-5 px-12 rounded-full text-sm uppercase tracking-[0.3em] italic transition-all shadow-[0_0_30px_rgba(234,88,12,0.4)]"
+              >
+                Join the Squad
+              </a>
+            </motion.div>
+          </div>
+        </section>
+      </div>
     </div>
-  </div>
-</section>
-
-      {/* --- 4. MEET THE TEAM SECTION --- */}
-<section className="py-20 sm:py-28 bg-gradient-to-r from-gray-900 via-gray-800 to-black relative overflow-hidden">
-  <div className="container mx-auto px-6 text-center relative z-10">
-    {/* Heading */}
-    <motion.h2
-      initial={{ opacity: 0, y: -40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 1 }}
-      className="text-5xl font-extrabold tracking-tight uppercase mb-6"
-    >
-      Meet Our{" "}
-      <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-amber-400 to-orange-600 animate-pulse">
-        Elite Trainers
-      </span>
-    </motion.h2>
-
-    {/* Subtitle */}
-    <motion.p
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 1, delay: 0.2 }}
-      className="max-w-3xl mx-auto text-lg text-gray-300 font-semibold leading-relaxed mb-16"
-    >
-      <span className="text-orange-400 font-bold">Certified. Experienced. Passionate.</span>{" "}
-      Our trainers are the best in the business—dedicated to helping you unlock your full potential.
-    </motion.p>
-
-    {/* Trainers Grid */}
-<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-  {[
-    {
-      name: "Jane Doe",
-      role: "Head of Strength Training",
-      img: "https://images.unsplash.com/photo-1605296867304-46d5465a13f1?q=80&w=2940&auto=format&fit=crop",
-    },
-    {
-      name: "John Smith",
-      role: "Cardio & Endurance Expert",
-      img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=2940&auto=format&fit=crop",
-    },
-    {
-      name: "Emily White",
-      role: "Nutrition & Wellness Coach",
-      img: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=600&auto=format&fit=crop&q=60",
-    },
-  ].map((trainer, i) => (
-    <motion.div
-      key={i}
-      initial={{ opacity: 0, scale: 0.9 }}
-      whileInView={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.8, delay: i * 0.2 }}
-    >
-      <Tilt className="bg-gray-900 rounded-2xl overflow-hidden 
-                        border border-orange-500/30 
-                        shadow-2xl transition duration-300
-                        hover:shadow-[0_0_25px_5px_rgba(255,215,0,0.6)] 
-                        hover:border-orange-400">
-        <img
-          src={trainer.img}
-          alt={trainer.name}
-          className="w-full h-80 object-cover"
-        />
-        <div className="p-6 bg-gradient-to-t from-black/70 via-gray-900/80 to-transparent">
-          <h3 className="text-2xl font-extrabold text-white tracking-wide">
-            {trainer.name}
-          </h3>
-          <p className="text-orange-400 font-semibold mt-1">
-            {trainer.role}
-          </p>
-        </div>
-      </Tilt>
-    </motion.div>
-  ))}
-</div>
-
-    {/* Call to Action with Hover Shimmer */}
-    <div className="flex justify-center mt-16">
-      <motion.a
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.6 }}
-        href="/select-workout"
-        className="group relative inline-block font-bold py-3 px-10 rounded-xl text-lg shadow-lg 
-                   bg-gradient-to-r from-orange-500 via-amber-400 to-orange-600 
-                   text-white transition-all duration-300 hover:scale-105 overflow-hidden"
-      >
-        {/* Button Text */}
-        <span className="relative z-10">Explore All Trainers & Specialties</span>
-
-        {/* Shimmer Overlay (only on hover) */}
-        <span
-          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent 
-                     -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out
-                     mix-blend-lighten pointer-events-none"
-        ></span>
-      </motion.a>
-    </div>
-  </div>
-
-  {/* Overlay Gradient for Depth */}
-  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/70"></div>
-</section>
-
-       </div>
   );
 };
 
