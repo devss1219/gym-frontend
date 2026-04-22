@@ -3,20 +3,23 @@ import { useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 
+// 1. API BASE URL Setup (Vite ke liye sahi syntax)
+const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
 const Login = () => {
   const navigate = useNavigate();
   const [loginType, setLoginType] = useState("user");
 
-  // --- Member Login Logic (Fixed Data Selection) ---
+  // --- Member Login Logic ---
   const handleUserLogin = async (e) => {
     e.preventDefault();
     
-    // 👇 ID ya Name se data uthana zyada safe hai
     const email = e.target.email.value;
     const password = e.target.password.value;
 
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/login", { email, password });
+      // API call using the dynamic BASE URL
+      const res = await axios.post(`${API_BASE}/api/auth/login`, { email, password });
       
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
@@ -24,7 +27,6 @@ const Login = () => {
       alert(`Welcome back, ${res.data.user.name}!`);
       navigate("/select-workout");
     } catch (err) {
-      // Backend se asli error message dikhayega
       alert(err.response?.data?.message || "Login failed! Email/Password check karein.");
     }
   };
@@ -66,10 +68,12 @@ const Login = () => {
       <div className="absolute top-1/4 -left-20 w-80 h-80 bg-orange-600/20 rounded-full blur-[120px] pointer-events-none"></div>
       <div className="absolute bottom-1/4 -right-20 w-80 h-80 bg-blue-600/10 rounded-full blur-[120px] pointer-events-none"></div>
 
+      {/* --- Login Card (Layout Fix: mx-auto and max-w-[420px]) --- */}
       <motion.div 
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="w-full max-w-md p-[2px] bg-gradient-to-b from-orange-500/50 to-transparent rounded-[2.5rem] relative z-10 shadow-[0_0_50px_rgba(0,0,0,0.8)]"
+        // max-w aur mx-auto layout stretch hone se rokega
+        className="w-full max-w-[420px] mx-auto p-[2px] bg-gradient-to-b from-orange-500/50 to-transparent rounded-[2.5rem] relative z-10 shadow-[0_0_50px_rgba(0,0,0,0.8)]"
       >
         <div className="bg-gray-900/95 backdrop-blur-2xl p-8 md:p-10 rounded-[2.4rem] space-y-8">
           
@@ -113,7 +117,7 @@ const Login = () => {
                   <div className="group">
                     <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Email</label>
                     <input 
-                      name="email" // 👈 Name attribute added
+                      name="email" 
                       type="email" 
                       required 
                       placeholder="CHAMPION@EMAIL.COM" 
@@ -123,7 +127,7 @@ const Login = () => {
                   <div className="group">
                     <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Secret Key</label>
                     <input 
-                      name="password" // 👈 Name attribute added
+                      name="password" 
                       type="password" 
                       required 
                       placeholder="••••••••" 
