@@ -3,6 +3,9 @@ import { useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 
+// 1. API URL setup (Vite ke liye sahi syntax)
+const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
 const Signup = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -28,7 +31,8 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/signup", formData);
+      // 2. Dynamic API_BASE ka use
+      const res = await axios.post(`${API_BASE}/api/auth/signup`, formData);
       alert(res.data.message);
       navigate("/login"); 
     } catch (err) {
@@ -39,7 +43,7 @@ const Signup = () => {
   return (
     <div className="min-h-screen bg-gray-950 flex items-center justify-center p-4 relative overflow-hidden">
       
-      {/* --- MASTER FITNESS PATTERN (Fixed Background) --- */}
+      {/* --- MASTER FITNESS PATTERN --- */}
       <div className="fixed inset-0 z-0 opacity-[0.07] pointer-events-none">
         <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
           <defs>
@@ -55,13 +59,13 @@ const Signup = () => {
         </svg>
       </div>
 
-      {/* --- Signup Card --- */}
+      {/* --- Signup Card (Layout Fix: max-w-[480px] aur mx-auto) --- */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-lg p-[2px] bg-gradient-to-b from-orange-500/50 to-transparent rounded-[2.5rem] relative z-10 shadow-2xl my-10"
+        className="w-full max-w-[480px] mx-auto p-[2px] bg-gradient-to-b from-orange-500/50 to-transparent rounded-[2.5rem] relative z-10 shadow-[0_0_50px_rgba(0,0,0,0.8)]"
       >
-        <div className="bg-gray-900/95 backdrop-blur-2xl p-8 md:p-12 rounded-[2.4rem] space-y-8">
+        <div className="bg-gray-900/95 backdrop-blur-2xl p-8 md:p-10 rounded-[2.4rem] space-y-6">
           
           <div className="text-center">
             <h2 className="text-4xl font-black italic uppercase text-white tracking-tighter leading-none">
@@ -70,7 +74,7 @@ const Signup = () => {
             <p className="text-gray-500 text-[10px] uppercase tracking-widest mt-3 font-bold">Start your transformation today</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-4">
             {/* Role Selection */}
             <div>
               <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Choose Your Role</label>
@@ -85,7 +89,7 @@ const Signup = () => {
               </select>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-4">
               <div>
                 <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Full Name</label>
                 <input 
@@ -117,7 +121,7 @@ const Signup = () => {
               />
             </div>
 
-            {/* --- Trainer Specific Fields (UPLOAD instead of URL) --- */}
+            {/* --- Trainer Specific Fields --- */}
             <AnimatePresence>
               {formData.role === "trainer" && (
                 <motion.div 
@@ -149,16 +153,6 @@ const Signup = () => {
                         onChange={handleImageChange}
                       />
                     </div>
-
-                    {formData.image && (
-                      <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="flex justify-center">
-                        <img 
-                          src={formData.image} 
-                          alt="Preview" 
-                          className="w-20 h-20 rounded-2xl object-cover border-2 border-orange-500 shadow-xl" 
-                        />
-                      </motion.div>
-                    )}
                   </div>
                 </motion.div>
               )}

@@ -60,14 +60,14 @@ const Contact = () => {
               <div className="w-12 h-12 rounded-2xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-500 group-hover:bg-orange-500 group-hover:text-white transition-all duration-300">
                 <FaPhoneAlt size={20} />
               </div>
-              <p className="text-gray-400 font-medium italic">(123) 456-7890</p>
+              <p className="text-gray-400 font-medium italic">+91 6397640938</p>
             </div>
 
             <div className="flex items-center gap-5 group">
               <div className="w-12 h-12 rounded-2xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-500 group-hover:bg-orange-500 group-hover:text-white transition-all duration-300">
                 <FaEnvelope size={20} />
               </div>
-              <p className="text-gray-400 font-medium italic">contact@nolimit.com</p>
+              <p className="text-gray-400 font-medium italic">ershobhit07@gmail.com</p>
             </div>
           </div>
         </div>

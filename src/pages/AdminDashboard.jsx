@@ -4,15 +4,19 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FaArrowLeft, FaUsers, FaDumbbell, FaCheckCircle, FaTrashAlt, FaSync, FaShieldAlt } from "react-icons/fa";
 import axios from "axios";
 
+// 1. VITE ke liye sahi API URL setup
+const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // 2. Localhost ko hata kar API_BASE use kiya gaya hai
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:5000/api/auth/users");
+      const res = await axios.get(`${API_BASE}/api/auth/users`);
       setUsers(res.data);
       setLoading(false);
     } catch (err) {
@@ -24,7 +28,7 @@ const AdminDashboard = () => {
   const handleDelete = async (id) => {
     if (window.confirm("CAUTION: Kya aap is member ka access permanent delete karna chahte hain?")) {
       try {
-        const res = await axios.delete(`http://localhost:5000/api/auth/users/${id}`);
+        const res = await axios.delete(`${API_BASE}/api/auth/users/${id}`);
         alert(res.data.message);
         fetchUsers();
       } catch (err) {
@@ -83,7 +87,6 @@ const AdminDashboard = () => {
 
         {/* --- STATS GRID --- */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* 1. Add Services Card - UNTOUCHED (Just like you wanted) */}
           <div className="bg-gray-900/60 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white/5 hover:border-green-500/50 shadow-2xl transition-all group">
             <div className="flex items-center justify-between mb-8">
               <div className="p-4 rounded-2xl bg-green-500/10 text-green-500 text-2xl group-hover:bg-green-500 group-hover:text-white transition-all">
@@ -165,26 +168,24 @@ const AdminDashboard = () => {
                         whileHover={{ scale: 1.01, backgroundColor: "rgba(255,255,255,0.03)" }}
                         className="group bg-white/5 transition-all rounded-3xl"
                     >
-                        {/* --- 💡 VIBRANT NAME COLUMN --- */}
                         <td className="py-6 px-6 rounded-l-3xl border-l border-white/5 group-hover:border-orange-500 transition-colors">
                             <span className="text-xl font-black italic uppercase tracking-tighter bg-gradient-to-r from-orange-400 via-amber-300 to-orange-600 bg-clip-text text-transparent drop-shadow-[0_2px_8px_rgba(251,191,36,0.3)]">
                                 {user.name}
                             </span>
                         </td>
-                        
                         <td className="py-6 text-gray-400 font-bold lowercase italic">{user.email}</td>
-                        
                         <td className="py-6">
-                        {/* --- 💡 VIBRANT ROLE BADGE --- */}
+                        {/* --- UPDATED ROLE DISPLAY LOGIC --- */}
                         <span className={`px-5 py-2 rounded-full text-[9px] font-black uppercase tracking-[0.2em] border shadow-lg transition-all ${
                             user.role === 'admin' 
                             ? 'bg-red-500/20 text-red-500 border-red-500/40 shadow-red-900/20' 
+                            : user.role === 'trainer'
+                            ? 'bg-blue-500/20 text-blue-400 border-blue-500/40 shadow-blue-900/20'
                             : 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30 shadow-cyan-900/10'
                         }`}>
-                            {user.role === 'admin' ? '⚜️ OWNER' : '⚡ MEMBER'}
+                            {user.role === 'admin' ? '🔱 GYM OWNER' : user.role === 'trainer' ? '🏋️ TRAINER' : '⚡ MEMBER'}
                         </span>
                         </td>
-                        
                         <td className="py-6 text-center rounded-r-3xl border-r border-white/5">
                         <button 
                             onClick={() => handleDelete(user._id)}
