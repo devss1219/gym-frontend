@@ -4,23 +4,27 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FaArrowLeft, FaUsers, FaDumbbell, FaCheckCircle, FaTrashAlt, FaSync, FaShieldAlt } from "react-icons/fa";
 import axios from "axios";
 
-// 1. VITE ke liye sahi API URL setup
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('member'); 
 
-  // 2. Localhost ko hata kar API_BASE use kiya gaya hai
-  const fetchUsers = async () => {
+const fetchUsers = async () => {
     try {
       setLoading(true);
+      
+      // 1. Seedha aapke Live Backend API se data aayega
       const res = await axios.get(`${API_BASE}/api/auth/users`);
-      setUsers(res.data);
+      
+      // 2. Test data hata diya, ab seedha Asli Data set hoga
+      setUsers(res.data); 
+      
       setLoading(false);
     } catch (err) {
-      console.error("Error fetching users:", err);
+      console.error("Live Database error:", err);
       setLoading(false);
     }
   };
@@ -41,10 +45,15 @@ const AdminDashboard = () => {
     fetchUsers();
   }, []);
 
+  const filteredUsers = users.filter((user) => {
+    if (activeTab === 'admin') return user.role === 'admin';
+    if (activeTab === 'trainer') return user.role === 'trainer';
+    return user.role !== 'admin' && user.role !== 'trainer'; 
+  });
+
   return (
     <div className="min-h-screen bg-gray-950 text-white p-6 md:p-10 relative overflow-hidden">
       
-      {/* --- MASTER BACKGROUND PATTERN --- */}
       <div className="fixed inset-0 z-0 opacity-10 pointer-events-none">
         <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
           <defs>
@@ -62,13 +71,12 @@ const AdminDashboard = () => {
 
       <div className="relative z-10 max-w-7xl mx-auto"> 
         
-        {/* --- HEADER SECTION --- */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
           <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }}>
             <div className="flex items-center gap-3 mb-2">
                 <FaShieldAlt className="text-orange-500 text-3xl animate-pulse" />
                 <h1 className="text-4xl md:text-6xl font-black italic uppercase tracking-tighter">
-                    Command <span className="text-orange-500 drop-shadow-[0_0_10px_rgba(249,115,22,0.4)]">Center</span>
+                  Command <span className="text-orange-500 drop-shadow-[0_0_10px_rgba(249,115,22,0.4)]">Center</span>
                 </h1>
             </div>
             <p className="text-gray-500 font-bold uppercase tracking-[0.3em] text-[10px] ml-1">No Limit Gym Management System v2.0</p>
@@ -85,7 +93,6 @@ const AdminDashboard = () => {
           </motion.button>
         </div>
 
-        {/* --- STATS GRID --- */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="bg-gray-900/60 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white/5 hover:border-green-500/50 shadow-2xl transition-all group">
             <div className="flex items-center justify-between mb-8">
@@ -131,19 +138,51 @@ const AdminDashboard = () => {
           </motion.div>
         </div>
 
-        {/* --- MEMBER TABLE SECTION --- */}
         <motion.div 
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             className="mt-12 bg-gray-900/40 backdrop-blur-2xl rounded-[3rem] border border-white/10 p-8 md:p-12 shadow-[0_0_50px_rgba(0,0,0,0.5)]"
         >
-          <div className="flex flex-col md:flex-row justify-between items-center mb-10 gap-4">
+          <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
             <h3 className="text-2xl md:text-3xl font-black uppercase italic tracking-tight underline decoration-orange-500 decoration-4 underline-offset-8">User Roster</h3>
             <button 
               onClick={fetchUsers} 
               className="flex items-center gap-3 text-white font-black text-[10px] uppercase tracking-[0.2em] bg-orange-600 hover:bg-orange-500 px-6 py-3 rounded-full transition-all shadow-lg shadow-orange-900/20 active:scale-95"
             >
               <FaSync className={loading ? "animate-spin" : ""} /> Update Roster
+            </button>
+          </div>
+
+          <div className="flex flex-wrap gap-4 mb-8">
+            <button
+              onClick={() => setActiveTab('member')}
+              className={`px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all ${
+                activeTab === 'member'
+                  ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/50 shadow-[0_0_15px_rgba(6,182,212,0.3)]'
+                  : 'bg-gray-900/50 text-gray-500 border border-white/5 hover:border-cyan-500/30 hover:text-cyan-400'
+              }`}
+            >
+              ⚡ Members
+            </button>
+            <button
+              onClick={() => setActiveTab('trainer')}
+              className={`px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all ${
+                activeTab === 'trainer'
+                  ? 'bg-blue-500/20 text-blue-400 border border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.3)]'
+                  : 'bg-gray-900/50 text-gray-500 border border-white/5 hover:border-blue-500/30 hover:text-blue-400'
+              }`}
+            >
+              🏋️ Trainers
+            </button>
+            <button
+              onClick={() => setActiveTab('admin')}
+              className={`px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all ${
+                activeTab === 'admin'
+                  ? 'bg-red-500/20 text-red-500 border border-red-500/50 shadow-[0_0_15px_rgba(239,68,68,0.3)]'
+                  : 'bg-gray-900/50 text-gray-500 border border-white/5 hover:border-red-500/30 hover:text-red-500'
+              }`}
+            >
+              🔱 Owners
             </button>
           </div>
 
@@ -158,13 +197,22 @@ const AdminDashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                <AnimatePresence>
-                    {users.map((user, i) => (
+                <AnimatePresence mode="popLayout">
+                    {filteredUsers.length === 0 && (
+                      <motion.tr initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                        <td colSpan="4" className="text-center py-10 text-gray-500 font-bold uppercase tracking-widest text-xs">
+                          No {activeTab}s found in the system.
+                        </td>
+                      </motion.tr>
+                    )}
+                    {filteredUsers.map((user, i) => (
                     <motion.tr 
+                        layout
                         key={user._id}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: i * 0.05 }}
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        transition={{ duration: 0.2 }}
                         whileHover={{ scale: 1.01, backgroundColor: "rgba(255,255,255,0.03)" }}
                         className="group bg-white/5 transition-all rounded-3xl"
                     >
@@ -175,7 +223,6 @@ const AdminDashboard = () => {
                         </td>
                         <td className="py-6 text-gray-400 font-bold lowercase italic">{user.email}</td>
                         <td className="py-6">
-                        {/* --- UPDATED ROLE DISPLAY LOGIC --- */}
                         <span className={`px-5 py-2 rounded-full text-[9px] font-black uppercase tracking-[0.2em] border shadow-lg transition-all ${
                             user.role === 'admin' 
                             ? 'bg-red-500/20 text-red-500 border-red-500/40 shadow-red-900/20' 
