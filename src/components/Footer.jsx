@@ -1,27 +1,23 @@
 import React from 'react';
-import { Link } from 'react-router-dom'; // 👈 React Router import kiya
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
-  // Routes ka array bana diya taaki handle karna easy ho
-  // Routes ka array jisme humne Trainers ko Workouts se replace kar diya
   const quickLinks = [
     { name: 'Home', path: '/' },
     { name: 'About Us', path: '/about' },
     { name: 'Classes & Schedule', path: '/classes' },
     { name: 'Membership Plans', path: '/plans' },
-    { name: 'Workouts', path: '/select-workout' } // 👈 Yahan change kiya hai
+    { name: 'Workouts', path: '/select-workout' }
   ];
 
   return (
     <footer className="bg-gray-950 text-white pt-16 pb-8 border-t border-white/10 relative overflow-hidden">
-      {/* Background Glow Effect */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-1 bg-gradient-to-r from-transparent via-orange-500 to-transparent opacity-50"></div>
 
       <div className="container mx-auto px-6 lg:px-12">
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12 text-left">
           
-          {/* Column 1: Brand Info */}
           <div>
             <h2 className="text-3xl font-black italic tracking-tighter uppercase mb-2">
               NO <span className="text-orange-500">LIMIT</span> GYM
@@ -34,7 +30,6 @@ const Footer = () => {
             </p>
           </div>
 
-          {/* Column 2: Quick Links (Now with React Router Links) */}
           <div>
             <h3 className="text-lg font-bold uppercase tracking-wider mb-4 border-b border-gray-800 pb-2 inline-block">
               Quick Links
@@ -42,7 +37,6 @@ const Footer = () => {
             <ul className="space-y-3">
               {quickLinks.map((link) => (
                 <li key={link.name}>
-                  {/* 👈 <a> tag ki jagah <Link> lagaya gaya hai */}
                   <Link 
                     to={link.path} 
                     className="text-gray-400 hover:text-orange-500 hover:translate-x-2 transition-all duration-300 inline-block text-sm"
@@ -54,30 +48,33 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Column 3: Contact Us */}
           <div>
             <h3 className="text-lg font-bold uppercase tracking-wider mb-4 border-b border-gray-800 pb-2 inline-block">
               Contact Us
             </h3>
             <ul className="space-y-4 text-sm text-gray-400">
               <li className="flex items-start gap-3">
-                <span className="text-orange-500 mt-1">📍</span>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-orange-500 shrink-0 mt-0.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                </svg>
                 <span>123 Fitness Street, Gym Avenue,<br/>Bareilly, UP 243001</span>
               </li>
               <li className="flex items-center gap-3">
-                <span className="text-orange-500">📞</span>
-                {/* 👈 Apna real number yahan daal lein */}
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-orange-500 shrink-0">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-2.896-1.596-5.48-4.18-7.076-7.076l1.293-.97c.362-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z" />
+                </svg>
                 <span>+91 6397640938</span> 
               </li>
               <li className="flex items-center gap-3">
-                <span className="text-orange-500">✉️</span>
-                {/* 👈 Apni real email yahan daal lein */}
-                <span>support@nolimitgym.com</span>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-orange-500 shrink-0">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+                </svg>
+                <span>ershobhit07@gmail.com</span>
               </li>
             </ul>
           </div>
 
-          {/* Column 4: Gym Timing */}
           <div>
             <h3 className="text-lg font-bold uppercase tracking-wider mb-4 border-b border-gray-800 pb-2 inline-block">
               Gym Hours
