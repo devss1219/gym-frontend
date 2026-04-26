@@ -91,7 +91,7 @@ const Login = () => {
                 loginType === "user" ? "bg-orange-600 text-white shadow-lg" : "text-gray-500 hover:text-gray-300"
               }`}
             >
-              Member
+              Member / Coach
             </button>
             <button
               type="button"
@@ -100,7 +100,7 @@ const Login = () => {
                 loginType === "admin" ? "bg-blue-600 text-white shadow-lg" : "text-gray-500 hover:text-gray-300"
               }`}
             >
-              Coach / Admin
+              Admin
             </button>
           </div>
 
@@ -116,7 +116,7 @@ const Login = () => {
               >
                 <div className="text-center">
                    <h2 className="text-4xl font-black italic uppercase text-white tracking-tighter leading-none">Enter <br/><span className="text-orange-500">The Arena</span></h2>
-                   <p className="text-gray-500 text-[10px] uppercase tracking-widest mt-3 font-bold">No Limit Fitness Member Portal</p>
+                   <p className="text-gray-500 text-[10px] uppercase tracking-widest mt-3 font-bold">Member & Coach Portal</p>
                 </div>
 
                 <div className="space-y-4 pt-4">

@@ -7,57 +7,7 @@ import { useNavigate } from "react-router-dom";
 // --- 1. API BASE URL Setup (Vite Compatibility) ---
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
-// --- Static Trainer Data (Inhe hum as a backup rakhenge) ---
-const allTrainersStatic = [
-  {
-    id: "s1",
-    name: "Jane Doe",
-    title: "Head of Strength Training",
-    specialty: "Strength",
-    image: "https://images.unsplash.com/photo-1605296867304-46d5465a13f1?q=80&w=2940&auto=format&fit=crop",
-    description: "A certified NSCA Strength and Conditioning Specialist, Jane has over 10 years of experience in powerlifting.",
-  },
-  {
-    id: "s2",
-    name: "John Smith",
-    title: "Cardio & Endurance Expert",
-    specialty: "Cardio",
-    image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=2940&auto=format&fit=crop",
-    description: "John is an ACE Certified expert in HIIT and metabolic conditioning, helping clients build incredible stamina.",
-  },
-  {
-    id: "s3",
-    name: "Emily White",
-    title: "Nutrition & Wellness Coach",
-    specialty: "Yoga",
-    image: "https://media.istockphoto.com/id/856797530/photo/portrait-of-a-beautiful-woman-at-the-gym.webp?a=1&b=1&s=612x612&w=0&k=20&c=Rn414EI_NW10M9w6WEqag9LdS5N2CO8RJf_e259q58=",
-    description: "Emily crafts holistic lifestyle plans, combining Vinyasa yoga with expert nutritional guidance for lasting results.",
-  },
-  {
-    id: "s4",
-    name: "Marcus Chen",
-    title: "CrossFit Level 2 Trainer",
-    specialty: "CrossFit",
-    image: "https://images.unsplash.com/photo-1750698544805-d0190a33a0ff?w=1000&auto=format&fit=crop&q=60",
-    description: "Marcus lives and breathes functional fitness, pushing athletes to new heights with intense CrossFit programming.",
-  },
-  {
-    id: "s5",
-    name: "Sophia Rodriguez",
-    title: "Yoga & Flexibility Guru",
-    specialty: "Yoga",
-    image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=3020&auto=format&fit=crop",
-    description: "With a focus on mobility and mindfulness, Sophia guides members through restorative and powerful yoga flows.",
-  },
-  {
-    id: "s6",
-    name: "David Lee",
-    title: "Lead Bodybuilding Coach",
-    specialty: "Strength",
-    image: "https://images.unsplash.com/photo-1581009137042-c552e485697a?q=80&w=2940&auto=format&fit=crop",
-    description: "A competitive bodybuilder, David specializes in hypertrophy training and physique sculpting for all levels.",
-  },
-];
+// --- Trainers Data will come strictly from DB ---
 
 const workoutCategories = ["All", "Strength", "Cardio", "Yoga", "CrossFit"];
 
@@ -88,13 +38,10 @@ const SelectWorkout = () => {
     fetchFromDB();
   }, []);
 
-  // --- 3. Merging Static and Dynamic Data ---
-  const combinedTrainers = [...allTrainersStatic, ...dbTrainers];
-
   const filteredTrainers =
     activeCategory === "All"
-      ? combinedTrainers
-      : combinedTrainers.filter((trainer) => 
+      ? dbTrainers
+      : dbTrainers.filter((trainer) => 
           trainer.specialty.toLowerCase().trim() === activeCategory.toLowerCase().trim()
         );
 
@@ -197,9 +144,7 @@ const SelectWorkout = () => {
                       "{trainer.description}"
                     </p>
                     <button 
-                      onClick={() => trainer.id.toString().startsWith('s') 
-                        ? alert('Static trainer - please register a real trainer via Signup!') 
-                        : navigate(`/trainer/${trainer.id}`)}
+                      onClick={() => navigate(`/trainer/${trainer.id}`)}
                       className="mt-10 w-full py-4 bg-white/5 hover:bg-orange-600 text-white font-black rounded-2xl border border-white/10 hover:border-orange-600 transition-all duration-300 shadow-xl active:scale-95 uppercase text-xs tracking-[0.2em] italic">
                       View Full Profile
                     </button>
