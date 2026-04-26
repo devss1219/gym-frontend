@@ -3,6 +3,7 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 import Signup from "./pages/Signup.jsx";
+import ScrollToTop from "./components/ScrollToTop.jsx";
 
 // Layout
 import MainLayout from "./components/MainLayout.jsx";
@@ -24,6 +25,7 @@ import TrainerDashboard from "./pages/TrainerDashboard.jsx";
 const App = () => {
   return (
     <div className="bg-gray-900 min-h-screen">
+      <ScrollToTop />
       <Routes>
         {/* Routes with Navbar */}
         <Route path="/" element={<MainLayout />}>
