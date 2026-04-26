@@ -1,38 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, NavLink, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaHome, FaInfoCircle, FaEnvelope, FaDumbbell, FaUserPlus, FaSignOutAlt, FaThLarge } from 'react-icons/fa';
+import { FaHome, FaInfoCircle, FaEnvelope, FaDumbbell, FaUserPlus, FaSignOutAlt, FaCalendarCheck, FaChalkboardTeacher } from 'react-icons/fa';
+import { useAuth } from '../context/AuthContext';
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [userName, setUserName] = useState("");
-  const [userRole, setUserRole] = useState(""); 
   const location = useLocation();
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
-  useEffect(() => {
-    const checkUser = () => {
-      const userData = localStorage.getItem("user");
-      if (userData) {
-        const user = JSON.parse(userData);
-        setUserName(user.name);
-        setUserRole(user.role);
-      } else {
-        setUserName("");
-        setUserRole("");
-      }
-    };
-    checkUser();
-    window.addEventListener('storage', checkUser);
-    return () => window.removeEventListener('storage', checkUser);
-  }, [location]);
+  const userName = user?.name || "";
+  const userRole = user?.role || "";
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    setUserName("");
-    setUserRole("");
+    logout();
     setIsMenuOpen(false);
     navigate("/login");
   };
@@ -103,6 +86,22 @@ const Navbar = () => {
                     Dashboard
                   </NavLink>
                 )}
+                {userRole === "trainer" && (
+                  <NavLink 
+                    to="/trainer-dashboard" 
+                    className="text-[10px] font-black uppercase tracking-[0.2em] bg-white/5 border border-orange-500/30 text-orange-500 px-4 py-2 rounded-full hover:bg-orange-500 hover:text-white transition-all shadow-md flex items-center gap-1.5"
+                  >
+                    <FaChalkboardTeacher /> My Requests
+                  </NavLink>
+                )}
+                {userRole === "user" && (
+                  <NavLink 
+                    to="/my-bookings" 
+                    className="text-[10px] font-black uppercase tracking-[0.2em] bg-white/5 border border-orange-500/30 text-orange-500 px-4 py-2 rounded-full hover:bg-orange-500 hover:text-white transition-all shadow-md flex items-center gap-1.5"
+                  >
+                    <FaCalendarCheck /> My Bookings
+                  </NavLink>
+                )}
                 
                 <div className="flex items-center gap-3 bg-gray-800/80 pl-1 pr-4 py-1 rounded-full border border-white/10">
                   <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-orange-600 to-red-600 flex items-center justify-center text-white font-black text-[10px]">
@@ -167,6 +166,16 @@ const Navbar = () => {
                 {userRole === "admin" && (
                    <NavLink to="/admin/dashboard" onClick={toggleMenu} className="w-full py-4 mb-4 bg-orange-600/10 border border-orange-500/50 text-orange-500 rounded-2xl font-black uppercase text-center block">
                       Admin Dashboard
+                   </NavLink>
+                )}
+                {userRole === "trainer" && (
+                   <NavLink to="/trainer-dashboard" onClick={toggleMenu} className="w-full py-4 mb-4 bg-orange-600/10 border border-orange-500/50 text-orange-500 rounded-2xl font-black uppercase text-center flex items-center justify-center gap-2">
+                      <FaChalkboardTeacher /> My Requests
+                   </NavLink>
+                )}
+                {userRole === "user" && (
+                   <NavLink to="/my-bookings" onClick={toggleMenu} className="w-full py-4 mb-4 bg-orange-600/10 border border-orange-500/50 text-orange-500 rounded-2xl font-black uppercase text-center flex items-center justify-center gap-2">
+                      <FaCalendarCheck /> My Bookings
                    </NavLink>
                 )}
                 {userName ? (

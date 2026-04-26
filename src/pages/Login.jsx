@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
+import { useAuth } from "../context/AuthContext";
 
 // 1. API BASE URL Setup (Vite ke liye sahi syntax)
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [loginType, setLoginType] = useState("user");
 
   // --- Member Login Logic ---
@@ -18,16 +20,20 @@ const Login = () => {
     const password = e.target.password.value;
 
     try {
-      // API call using the dynamic BASE URL
       const res = await axios.post(`${API_BASE}/api/auth/login`, { email, password });
       
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
+      // Use AuthContext login helper (saves to localStorage + context)
+      login(res.data.token, res.data.user);
 
       alert(`Welcome back, ${res.data.user.name}!`);
-      navigate("/select-workout");
+      // Redirect based on role
+      if (res.data.user.role === 'trainer') {
+        navigate("/trainer-dashboard");
+      } else {
+        navigate("/select-workout");
+      }
     } catch (err) {
-      alert(err.response?.data?.message || "Login failed! Email/Password check karein.");
+      alert(err.response?.data?.message || "Login failed! Check your email/password.");
     }
   };
 

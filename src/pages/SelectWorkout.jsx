@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Tilt from "react-parallax-tilt";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 // --- 1. API BASE URL Setup (Vite Compatibility) ---
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
@@ -61,6 +62,7 @@ const allTrainersStatic = [
 const workoutCategories = ["All", "Strength", "Cardio", "Yoga", "CrossFit"];
 
 const SelectWorkout = () => {
+  const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState("All");
   const [dbTrainers, setDbTrainers] = useState([]);
 
@@ -68,10 +70,8 @@ const SelectWorkout = () => {
     const fetchFromDB = async () => {
       try {
         // --- 2. Live API URL Call ---
-        const res = await axios.get(`${API_BASE}/api/auth/users`);
-        const trainersOnly = res.data
-          .filter(user => user.role === 'trainer')
-          .map(t => ({
+        const res = await axios.get(`${API_BASE}/api/trainers`);
+        const trainersOnly = res.data.map(t => ({
             id: t._id,
             name: t.name,
             title: t.specialization || "Professional Coach",
@@ -196,7 +196,11 @@ const SelectWorkout = () => {
                     <p className="text-gray-400 text-sm leading-relaxed line-clamp-3 italic font-medium">
                       "{trainer.description}"
                     </p>
-                    <button className="mt-10 w-full py-4 bg-white/5 hover:bg-orange-600 text-white font-black rounded-2xl border border-white/10 hover:border-orange-600 transition-all duration-300 shadow-xl active:scale-95 uppercase text-xs tracking-[0.2em] italic">
+                    <button 
+                      onClick={() => trainer.id.toString().startsWith('s') 
+                        ? alert('Static trainer - please register a real trainer via Signup!') 
+                        : navigate(`/trainer/${trainer.id}`)}
+                      className="mt-10 w-full py-4 bg-white/5 hover:bg-orange-600 text-white font-black rounded-2xl border border-white/10 hover:border-orange-600 transition-all duration-300 shadow-xl active:scale-95 uppercase text-xs tracking-[0.2em] italic">
                       View Full Profile
                     </button>
                   </div>
