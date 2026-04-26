@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 // ✅ Reusable Tilt Component (Premium version)
 const Tilt = ({ children, className }) => {
@@ -31,6 +33,23 @@ const TypingEffect = ({ text, speed = 40 }) => {
 };
 
 const About = () => {
+  const navigate = useNavigate();
+  const [trainers, setTrainers] = useState([]);
+  
+  useEffect(() => {
+    const fetchTrainers = async () => {
+      try {
+        const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
+        const res = await axios.get(`${API_BASE}/api/trainers`);
+        // Limit to 3 trainers for the About page showcase
+        setTrainers(res.data.slice(0, 3));
+      } catch (err) {
+        console.error("Error fetching trainers:", err);
+      }
+    };
+    fetchTrainers();
+  }, []);
+
   return (
     <div className="bg-gray-950 text-white overflow-hidden relative">
       
@@ -147,24 +166,25 @@ const About = () => {
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-              {[
-                { name: "Jane Doe", role: "Strength General", img: "https://images.unsplash.com/photo-1605296867304-46d5465a13f1?q=80&w=2940" },
-                { name: "John Smith", role: "Endurance Master", img: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=2940" },
-                { name: "Emily White", role: "Holistic Guru", img: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=600" }
-              ].map((trainer, i) => (
+              {trainers.map((trainer, i) => (
                 <motion.div
-                  key={i}
+                  key={trainer._id}
                   initial={{ opacity: 0, scale: 0.9 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                 >
-                  <Tilt className="group relative bg-gray-900 rounded-[40px] overflow-hidden border border-white/5 hover:border-orange-500/50 shadow-2xl transition-all">
-                    <div className="h-96 w-full relative">
-                      <img src={trainer.img} alt={trainer.name} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-110" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-transparent to-transparent"></div>
+                  <Tilt className="group relative bg-gray-900 rounded-[40px] overflow-hidden border border-white/5 hover:border-orange-500/50 shadow-2xl transition-all cursor-pointer">
+                    <div className="h-96 w-full relative" onClick={() => navigate(`/trainer/${trainer._id}`)}>
+                      <img 
+                        src={trainer.image || "https://images.unsplash.com/photo-1594381898411-846e7d193883?q=80&w=1000"} 
+                        alt={trainer.name} 
+                        className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-110" 
+                        onError={(e) => { e.target.src = "https://images.unsplash.com/photo-1594381898411-846e7d193883?q=80&w=1000"; }}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-transparent to-transparent pointer-events-none"></div>
                     </div>
-                    <div className="p-8 absolute bottom-0 w-full text-left">
+                    <div className="p-8 absolute bottom-0 w-full text-left pointer-events-none">
                       <h3 className="text-2xl font-black uppercase italic text-white leading-none">{trainer.name}</h3>
-                      <p className="text-orange-500 font-bold uppercase text-xs tracking-widest mt-2">{trainer.role}</p>
+                      <p className="text-orange-500 font-bold uppercase text-xs tracking-widest mt-2">{trainer.specialization || "Professional Coach"}</p>
                     </div>
                   </Tilt>
                 </motion.div>

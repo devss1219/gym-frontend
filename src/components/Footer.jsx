@@ -5,8 +5,8 @@ const Footer = () => {
   const quickLinks = [
     { name: 'Home', path: '/' },
     { name: 'About Us', path: '/about' },
-    { name: 'Classes & Schedule', path: '/classes' },
-    { name: 'Membership Plans', path: '/plans' },
+    { name: 'Classes & Schedule', path: '#', soon: true },
+    { name: 'Membership Plans', path: '#', soon: true },
     { name: 'Workouts', path: '/select-workout' }
   ];
 
@@ -37,12 +37,21 @@ const Footer = () => {
             <ul className="space-y-3">
               {quickLinks.map((link) => (
                 <li key={link.name}>
-                  <Link 
-                    to={link.path} 
-                    className="text-gray-400 hover:text-orange-500 hover:translate-x-2 transition-all duration-300 inline-block text-sm"
-                  >
-                    {link.name}
-                  </Link>
+                  {link.soon ? (
+                    <button
+                      onClick={() => alert("Updating soon")}
+                      className="text-gray-400 hover:text-orange-500 hover:translate-x-2 transition-all duration-300 inline-block text-sm cursor-pointer text-left focus:outline-none"
+                    >
+                      {link.name}
+                    </button>
+                  ) : (
+                    <Link 
+                      to={link.path} 
+                      className="text-gray-400 hover:text-orange-500 hover:translate-x-2 transition-all duration-300 inline-block text-sm"
+                    >
+                      {link.name}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>
