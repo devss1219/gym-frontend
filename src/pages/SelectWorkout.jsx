@@ -15,6 +15,7 @@ const SelectWorkout = () => {
   const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState("All");
   const [dbTrainers, setDbTrainers] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchFromDB = async () => {
@@ -33,6 +34,8 @@ const SelectWorkout = () => {
         setDbTrainers(trainersOnly);
       } catch (err) {
         console.error("DB Fetch error:", err);
+      } finally {
+        setLoading(false);
       }
     };
     fetchFromDB();
@@ -103,10 +106,29 @@ const SelectWorkout = () => {
       </section>
 
       {/* TRAINERS GRID */}
-      <section className="py-24 relative z-10">
+      <section className="py-24 relative z-10 min-h-[50vh]">
         <div className="container mx-auto px-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
-            {filteredTrainers.map((trainer, i) => (
+          {loading ? (
+            <div className="flex flex-col items-center justify-center py-20">
+              <div className="flex gap-3 mb-6">
+                {[0, 1, 2].map((i) => (
+                  <motion.div
+                    key={i}
+                    className="w-4 h-4 rounded-full bg-orange-600 shadow-[0_0_15px_rgba(234,88,12,0.6)]"
+                    animate={{ y: [-15, 0, -15], scale: [1, 1.2, 1] }}
+                    transition={{ duration: 0.8, delay: i * 0.15, repeat: Infinity, ease: "easeInOut" }}
+                  />
+                ))}
+              </div>
+              <p className="text-orange-500 font-black uppercase tracking-[0.3em] text-xs animate-pulse">Loading Elite Trainers...</p>
+            </div>
+          ) : filteredTrainers.length === 0 ? (
+            <div className="text-center py-20">
+              <p className="text-gray-500 text-xl font-bold uppercase tracking-widest">No trainers found in this category.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
+              {filteredTrainers.map((trainer, i) => (
               <motion.div
                 key={trainer.id}
                 initial={{ opacity: 0, y: 50 }}
@@ -151,8 +173,9 @@ const SelectWorkout = () => {
                   </div>
                 </Tilt>
               </motion.div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
     </div>
